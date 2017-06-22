@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+    </body>
+    <script>
+            var pH=4;
+            var pW=4;
+            var cssPre = '';//border-radius:50%;';
+            function readImg(url){
+                var img = new Image();
+                img.src = url;
+                var can = document.createElement('canvas');
+                var ctx = can.getContext("2d");
+                document.body.appendChild(img);
+                var imgData;
+                img.onload = function(){
+                    var w = parseInt(getComputedStyle(img).width);
+                    var h = parseInt(getComputedStyle(img).height);
+                    can.width = w;
+                    can.height = h;
+                    document.body.appendChild(can);
+                    ctx.drawImage(img, 0, 0,w,h);
+                    imgData = ctx.getImageData(0, 0, w, h);
+                    var pixes = combPix(imgData.data,w,h);
+                    document.body.removeChild(can);
+                    document.body.removeChild(img);
+                    var frag = document.createDocumentFragment();
+                    for(var i=0;i<pixes.length;i++){
+                        var div = document.createElement("div");
+                        frag.append(div);
+                        if(i%w==0){
+                        div.style.cssText = cssPre+'background:'+pixes[i]+';width:'+pW+'px;height:'+pH+'px;';
+                        }else{
+                        div.style.cssText = cssPre+'background:'+pixes[i]+';width:'+pW+'px;height:'+pH+'px;float:left;';
+                    }
+                    }
+                    document.body.appendChild(frag);
+                    frag = null;
+                    pixes = null;
+                    imgData = null;
+                    function combPix(d,w,h){
+                        var pixes = [];
+                        var len = d.length;
+                        for(var i=0;i<len;i+=4){
+                                pixes.push('rgba('+d[i]+','+d[i+1]+','+d[i+2]+','+d[i+3]+')');
+                        }
+                        return pixes;
+                    }
+                }
+            }
+            document.addEventListener('keydown', function(){
+                console.log(event.keyCode);
+                var flag = false;
+                if(event.keyCode == 38){
+                    pH++;
+                    pW++;
+                    flag = true;
+                }else if(event.keyCode == 40){
+                    pH--;
+                    pW--;
+                    flag = true;
+                }
+                if(flag){
+            document.body.innerHTML = '';
+            readImg('honor-pic.png')
+            readImg('user_img1.png')
+        }
+            }, false);
+            readImg('honor-pic.png')
+            readImg('user_img1.png')
+    </script>
+</html>
